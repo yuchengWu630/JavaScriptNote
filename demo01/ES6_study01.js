@@ -15,3 +15,7 @@ class Point{
 var c = new Point('you','me');
 
 c.toString(); //"(you and me)" 
+//Point的类型
+typeof Point  //"funtion"
+//Point类全等于Point类的原型的构造函数吗?  
+Point === Point.prototype.constructor //true
