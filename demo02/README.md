@@ -20,3 +20,14 @@ c.getClassName() //'Me'
 
 Me.name //ReferenceError: Me is not defined
 ```
+如果Class内部没有用到,可以直接省略Me,写成:
+```
+const MyClass = class {}
+```
+
+### Class不存在变量提升(声明提前)
+> 可以说是ES6的基本的改进
+```
+new Foo() //ReferenceError
+class Foo{}
+```
