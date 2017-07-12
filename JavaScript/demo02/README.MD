@@ -1,0 +1,1 @@
+# 利用addEventListener()方法 封装一个原生的事件代理
