@@ -1,42 +1,61 @@
-function C(){
-        this.yuchengWu = [];
-};
-var yuchengWu = new C();
-
-C.prototype.bind = function(key,fun){
-        var tasks = this.yuchengWu[key] || [];    
-        tasks.push(fun);    
-        this.yuchengWu[key] = tasks;
-};
-C.prototype.exec = function(key,fun,param){
-        var args = Array.prototype.slice.apply(arguments).slice(2);    
-        var tasks = this.yuchengWu[key];    
-        tasks = [];    
-        tasks.push(fun);    
-        tasks[0].apply(this,args);
-};
-C.prototype.execAll = function(key,param){
-        var tasks = this.yuchengWu[key];    
-        var args = Array.prototype.slice.apply(arguments).slice(1);    
-        if(!Array.isArray(tasks)) return;    
-        tasks.forEach(function(fun){
-            fun.apply(this,args)
-        });
-};
-C.prototype.del = function(key ,fun){    
-        var tasks = this.yuchengWu[key];    
-        var method = fun.toString();    
-        state = 0;    
-        for(let i = 0;i<tasks.length;i++){        
-        if(tasks[i] == method){            
-            tasks[i]="";            
-            state=1;        
-            };    
-        };   
-        if(state == 0){
-        console.log("没找到对应函数")    
-        };  
-};
-C.prototype.delAll = function (key) {
-        this.yuchengWu[key]=[]
-};
+function wyc(name) {
+    this.tasks = [];   
+    var self = this;
+    window.c=name;
+    var fn =(function(n){
+        return function(){
+            console.log("你好, " + c + "!");
+            self.next();
+        }
+    })(name);
+    this.tasks.push(fn);
+    setTimeout(function(){
+        self.next();
+    }, 0); // 在下一个事件循环启动任务
+}
+/* 事件调度函数 */
+wyc.prototype.next = function() { 
+    var fn = this.tasks.shift();
+    fn && fn();
+}
+wyc.prototype.eat = function(name) {
+    var self = this;
+    var fn =(function(name){
+        return function(){
+            console.log(c + "吃了" + name);
+            self.next()
+        }
+    })(name);
+    this.tasks.push(fn);
+    return this; // 实现链式调用
+}
+wyc.prototype.sleep = function(time) {
+    var self = this;
+    var fn = (function(time){
+        return function() {
+            setTimeout(function(){
+                console.log("休息" + time + "秒!");
+                self.next();
+            }, time * 1000);
+        }
+    })(time);
+    this.tasks.push(fn);
+   return this;
+}
+wyc.prototype.sleepFirst = function(time) {
+    var self = this;
+    var fn = (function(time) {
+        return function() {
+            setTimeout(function() {
+                console.log("开始等待" + time + "秒!");
+                self.next();
+            }, time * 1000);
+        }
+    })(time);
+    this.tasks.unshift(fn);
+    // return this;
+}
+/* 实例化 */
+function Human(name){
+    return new wyc(name);
+}
