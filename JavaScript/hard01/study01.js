@@ -1,36 +1,39 @@
-function Emitter() {
-    this._listener = [];//_listener[自定义的事件名] = [所用执行的匿名函数1, 所用执行的匿名函数2]
-}
- 
-//注册事件
-Emitter.prototype.bind = function(eventName, callback) {
-    var listener = this._listener[eventName] || [];//this._listener[eventName]没有值则将listener定义为[](数组)。
-    listener.push(callback);
-    this._listener[eventName] = listener;
-}
- 
- //触发事件
-Emitter.prototype.trigger = function(eventName) {
-    var args = Array.prototype.slice.apply(arguments).slice(1);//atgs为获得除了eventName后面的参数(注册事件的参数)
-    var listener = this._listener[eventName];
- 
-    if(!Array.isArray(listener)) return;//自定义事件名不存在
-    listener.forEach(function(callback) {
-        try {
-            callback.apply(this, args);
-        }catch(e) {
-            console.error(e);
-        }
-    })
-}
-//实例
-var emitter = new Emitter();
-    emitter.bind("myevent", function(arg1, arg2) {
-        console.log(arg1, arg2);
-    });
- 
-    emitter.bind("myevent", function(arg1, arg2) {
-        console.log(arg2, arg1);
-    });
- 
-    emitter.trigger('myevent', "a", "b");
+function C(){    this.yuchengWu = [];}
+var yuchengWu = new C();
+C.prototype.bind = function(key,fun){
+        var tasks = this.yuchengWu[key] || [];    
+        tasks.push(fun);    
+        this.yuchengWu[key] = tasks;
+    };
+C.prototype.exec = function(key,fun,param){
+        var args = Array.prototype.slice.apply(arguments).slice(2);    
+        var tasks = this.yuchengWu[key];    
+        tasks = [];    
+        tasks.push(fun);    
+        tasks[0].apply(this,args);
+    };
+C.prototype.execAll = function(key,param){
+        var tasks = this.yuchengWu[key];    
+        var args = Array.prototype.slice.apply(arguments).slice(1);    
+        if(!Array.isArray(tasks)) return;    
+        tasks.forEach(function(fun){            
+            fun.apply(this,args)  
+        })
+    };
+C.prototype.del = function(key ,fun){    
+    var tasks = this.yuchengWu[key];    
+    var method = fun.toString();    
+    state = 0;    
+    for(let i = 0;i<tasks.length;i++){        
+        if(tasks[i] == method){            
+            tasks[i]="";            
+            state=1;        
+        };    
+    };   
+    if(state == 0){
+                console.log("没找到对应函数")    
+            };  
+        };
+C.prototype.delAll = function (key) {
+        this.yuchengWu[key]=[]
+    };
