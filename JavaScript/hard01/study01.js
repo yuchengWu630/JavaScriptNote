@@ -24,18 +24,18 @@ C.prototype.execAll = function(key,param){
         });
 };
 C.prototype.del = function(key ,fun){    
-    var tasks = this.yuchengWu[key];    
-    var method = fun.toString();    
-    state = 0;    
-    for(let i = 0;i<tasks.length;i++){        
+        var tasks = this.yuchengWu[key];    
+        var method = fun.toString();    
+        state = 0;    
+        for(let i = 0;i<tasks.length;i++){        
         if(tasks[i] == method){            
             tasks[i]="";            
             state=1;        
-        };    
-    };   
-    if(state == 0){
-                console.log("没找到对应函数")    
-    };  
+            };    
+        };   
+        if(state == 0){
+        console.log("没找到对应函数")    
+        };  
 };
 C.prototype.delAll = function (key) {
         this.yuchengWu[key]=[]
