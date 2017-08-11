@@ -33,3 +33,46 @@ var result = asyncReadFile();
 // 4.更广的适用性,co模块约定了Generator函数yield命令后面必须是Thunk和promise.而async的await命令后面可以是promise对象和原始类型的值.
 // 5.返回值是promise对象.相比Generator函数返回的是iterator对象方便许多,可以用then方法指定下一步操作.
 
+
+//async函数的实现
+async function fn(args){
+    //...
+}
+function fn(args){
+    return spawn(function* (){
+        //...
+    })
+}
+
+function spawn(genF){
+    return new Promise(function(resolve,reject){
+
+        var gen = genF();
+        
+        function step(nextF){
+            try{
+                var next = nextF();
+            }
+            catch(e){
+                return reject(e);
+            }
+            if(next.done){
+                return resolve(next.value);
+            }
+            
+            Promise.resolve(next.value).then(function(v){
+                step(function(){
+                    return gen.next(v)
+                })
+            },function(e){
+                step(function(){
+                    return gen.throw(e)
+                })
+            })
+
+        }
+        step(function(){
+            return gen.next(undefined);
+        })
+    })
+}
